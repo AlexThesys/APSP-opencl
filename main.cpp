@@ -1,4 +1,4 @@
-#include "asps.h"
+#include "apsp.h"
 
 #define MAX_FSIZE 0x10000000
 #define MAX_DISTANCE 100000.0f   // the same as in kernel.cl
@@ -15,8 +15,8 @@ int main(int argc, char** argv) {
     if (!!read_data(argv[1], &g_data)) {
         return -1;
     }
-    if (calculate_asps(g_data)) {
-        puts("Failed calculating asps.");
+    if (calculate_apsp(g_data)) {
+        puts("Failed calculating apsp.");
         return -1;
     }
     print_data(g_data);

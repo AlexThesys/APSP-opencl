@@ -1,6 +1,6 @@
 ﻿#pragma once
 
-#include "asps.h"
+#include "apsp.h"
 #include "assert.h"
 
 #define BLOCK_SIDE 16   // the same as in kernel.cl
@@ -11,7 +11,7 @@ static cl_int init(data_cl* data, const char* filename);
 static cl_int destroy(data_cl* data);
 static cl_int setup_and_run(graph_data* g_data, data_cl* cl_data);
 
-cl_int calculate_asps(graph_data* g_data) {
+cl_int calculate_apsp(graph_data* g_data) {
     cl_int ret = 0;
     data_cl cl_data;
     ret = init(&cl_data, "kernel.cl");

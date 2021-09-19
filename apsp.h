@@ -37,4 +37,4 @@ struct data_cl {
     cl_mem objects[2];
 };
 
-cl_int calculate_asps(graph_data* g_data);
+cl_int calculate_apsp(graph_data* g_data);
