@@ -28,7 +28,7 @@ __kernel void dependent_phase(const int block_id, const int side_size, __global 
     barrier(CLK_LOCAL_MEM_FENCE | CLK_GLOBAL_MEM_FENCE);
 
 #pragma unroll
-    for (int u = 0; u < BLOCK_SIDE; ++u) {
+    for (int u = 0; u < BLOCK_SIDE; u++) {
         temp_dist = shared_dist[idy][u] + shared_dist[u][idx];
 
         barrier(CLK_LOCAL_MEM_FENCE | CLK_GLOBAL_MEM_FENCE);
@@ -108,7 +108,7 @@ __kernel void partialy_dependent_phase(const int block_id, const int side_size, 
     // Compute i-aligned singly dependent blocks
     if (block_id_y == 0) {
 #pragma unroll
-        for (int u = 0; u < BLOCK_SIDE; ++u) {
+        for (int u = 0; u < BLOCK_SIDE; u++) {
             new_dist = shared_dist_base[idy][u] + shared_dist[u][idx];
 
             if (new_dist < cur_dist) {
@@ -202,7 +202,7 @@ __kernel void independent_phase(const int block_id, const int side_size, __globa
         cur_path = path[v_id];
 
 #pragma unroll
-        for (int u = 0; u < BLOCK_SIDE; ++u) {
+        for (int u = 0; u < BLOCK_SIDE; u++) {
             new_dist = shared_dist_base_col[idy][u] + shared_dist_base_row[u][idx];
             if (cur_dist > new_dist) {
                 cur_dist = new_dist;

@@ -1,4 +1,5 @@
 #include "apsp.h"
+#include <chrono>
 
 #define MAX_FSIZE 0x10000000
 #define MAX_DISTANCE 100000.0f   // the same as in kernel.cl
@@ -15,10 +16,15 @@ int main(int argc, char** argv) {
     if (!!read_data(argv[1], &g_data)) {
         return -1;
     }
+    const auto start = std::chrono::high_resolution_clock::now();
     if (calculate_apsp(g_data)) {
         puts("Failed calculating apsp.");
         return -1;
     }
+    const auto stop = std::chrono::high_resolution_clock::now();
+    const auto duration = std::chrono::duration_cast<std::chrono::milliseconds>(stop - start).count();
+    printf("OpenCl chunk took %lu ms\n", duration);
+    
     print_data(g_data);
     delete(g_data);
 

@@ -120,17 +120,19 @@ static cl_int setup_and_run(graph_data* g_data, data_cl* cl_data) {
     int block_id = 0;
     for (; block_id < num_blocks; block_id++) {
         // dependent phase
-        ret = clSetKernelArg(cl_data->kernel[0], 0, sizeof(cl_int), (void*)&block_id);
-        ret = clEnqueueNDRangeKernel(cl_data->command_queue, cl_data->kernel[0], 2, NULL, global_item_size_0, local_item_size, 0, NULL, NULL);
+        ret |= clSetKernelArg(cl_data->kernel[0], 0, sizeof(cl_int), (void*)&block_id);
+        ret |= clEnqueueNDRangeKernel(cl_data->command_queue, cl_data->kernel[0], 2, NULL, global_item_size_0, local_item_size, 0, NULL, NULL);
 
         // partialy dependent phase
-        ret = clSetKernelArg(cl_data->kernel[1], 0, sizeof(cl_int), (void*)&block_id);
-        ret = clEnqueueNDRangeKernel(cl_data->command_queue, cl_data->kernel[1], 2, NULL, global_item_size_1, local_item_size, 0, NULL, NULL);
+        ret |= clSetKernelArg(cl_data->kernel[1], 0, sizeof(cl_int), (void*)&block_id);
+        ret |= clEnqueueNDRangeKernel(cl_data->command_queue, cl_data->kernel[1], 2, NULL, global_item_size_1, local_item_size, 0, NULL, NULL);
 
         // independent phase
-        ret = clSetKernelArg(cl_data->kernel[2], 0, sizeof(cl_int), (void*)&block_id);
-        ret = clEnqueueNDRangeKernel(cl_data->command_queue, cl_data->kernel[2], 2, NULL, global_item_size_2, local_item_size, 0, NULL, NULL);
+        ret |= clSetKernelArg(cl_data->kernel[2], 0, sizeof(cl_int), (void*)&block_id);
+        ret |= clEnqueueNDRangeKernel(cl_data->command_queue, cl_data->kernel[2], 2, NULL, global_item_size_2, local_item_size, 0, NULL, NULL);
     }
+    if (ret)
+        puts("Errors occured during kernel execution!");
 
     ret = move_memory_to_host(g_data, cl_data);
     if (ret != CL_SUCCESS) {
