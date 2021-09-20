@@ -72,7 +72,7 @@ static void print_data(graph_data* data) {
             if (max_dist > data->dist[i * size + j])
                 printf("%.2f", data->dist[i * size + j]);
             else
-                printf("-1");
+                printf("-1.00");
             if (j != size - 1) 
                 printf(",");
         }
