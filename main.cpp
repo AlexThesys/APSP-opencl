@@ -35,6 +35,14 @@ static int read_data(const char* fname, graph_data** data) {
     fscanf(file, "%d", &num_verts);
     fscanf(file, "%d", &num_edges);
     *data = new graph_data(num_verts);
+
+    // init distance and path predecessor matrix with MAX_DISTANCE values
+    const float max_dist = MAX_DISTANCE;
+    for (int i = 0, sz = num_verts * num_verts; i < sz; i++) {
+        (*data)->dist[i] = max_dist;
+        (*data)->path[i] = -1;
+    }
+
     int v0, v1, dist;
     // scan all the edges
     while (EOF != fscanf(file, "%d %d %d", &v0, &v1, &dist)) {  // num_edges
@@ -55,7 +63,7 @@ static int read_data(const char* fname, graph_data** data) {
 
 static void print_data(graph_data* data) {
     const int size = data->num_vertices;
-    const float max_dist = (float)MAX_DISTANCE;
+    const float max_dist = MAX_DISTANCE;
     puts("{\n    \"distances\":");
     printf("[");
     for (int i = 0; i < size; ++i) {

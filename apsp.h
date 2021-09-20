@@ -13,15 +13,15 @@
 #define NUM_BUFFERS 2
 
 struct graph_data {
-    float* dist;
-    int* path;
+    float* dist;    // minimum distance
+    int* path;  // vertex - predecessor on the path
     int num_vertices;
 
     /* Constructor for init fields */
     graph_data(int num) : num_vertices(num) {
         const int size = num * num;
-        dist = (float*)calloc(size, sizeof(float));
-        path = (int*)calloc(size, sizeof(int));
+        dist = (float*)malloc(size * sizeof(float));
+        path = (int*)malloc(size * sizeof(int));
     }
     ~graph_data() {
         free(path);
