@@ -66,8 +66,7 @@ __kernel void partialy_dependent_phase(const int block_id, const int side_size, 
 
     // Load base block for graph and predecessors
     int v_id = v0 * side_size + v1;
-    const bool inside = ((v0 < side_size) && (v1 < side_size));
-    if (inside) {
+    if ((v0 < side_size) && (v1 < side_size)) {
         shared_dist_base[idy][idx] = distances[v_id];
         shared_path_base[idy][idx] = path[v_id];
     } else {
@@ -92,6 +91,7 @@ __kernel void partialy_dependent_phase(const int block_id, const int side_size, 
     int cur_path;
 
     v_id = v0 * side_size + v1;
+    const bool inside = ((v0 < side_size) && (v1 < side_size));
     if (inside) {
         cur_dist = distances[v_id];
         cur_path = path[v_id];
@@ -172,7 +172,7 @@ __kernel void independent_phase(const int block_id, const int side_size, __globa
 
     // Load data for block
     int v_id;
-    if (v0_row < side_size && v1 < side_size) {
+    if ((v0_row < side_size) && (v1 < side_size)) {
         v_id = v0_row * side_size + v1;
 
         shared_dist_base_row[idy][idx] = distances[v_id];
@@ -196,7 +196,7 @@ __kernel void independent_phase(const int block_id, const int side_size, __globa
     float new_dist;
 
     // Compute data for block
-    if (v0 < side_size && v1 < side_size) {
+    if ((v0 < side_size) && v1 < (side_size)) {
         v_id = v0 * side_size + v1;
         cur_dist = distances[v_id];
         cur_path = path[v_id];
