@@ -101,7 +101,7 @@ static cl_int setup_and_run(graph_data* g_data, data_cl* cl_data) {
     }
 
     const int num_vertices = g_data->num_vertices;
-    assert(num_vertices > BLOCK_SIDE);
+    assert(num_vertices >= BLOCK_SIDE * 2);
     const int size = multipleOfN(num_vertices, BLOCK_SIDE); // make divisible by the block size
     // Execute the OpenCL kernel
     const size_t global_item_size_0[2] = { BLOCK_SIDE, BLOCK_SIDE };  // single doubly dependent block

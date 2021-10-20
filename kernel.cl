@@ -33,7 +33,7 @@ __kernel void dependent_phase(const int block_id, const int side_size, __global 
 
         barrier(CLK_LOCAL_MEM_FENCE | CLK_GLOBAL_MEM_FENCE);
 
-        if (temp_path < shared_dist[idy][idx]) {
+        if (temp_dist < shared_dist[idy][idx]) {
             shared_dist[idy][idx] = temp_dist;
             temp_path = shared_path[u][idx];
         }
