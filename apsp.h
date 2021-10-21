@@ -35,6 +35,7 @@ struct data_cl {
     cl_program program;
     cl_kernel kernel[3];
     cl_mem objects[2];
+    cl_device_id device_id = 0;
 };
 
 cl_int calculate_apsp(graph_data* g_data);
