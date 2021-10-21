@@ -18,7 +18,8 @@ struct graph_data {
     int num_vertices;
 
     /* Constructor for init fields */
-    graph_data(int num) : num_vertices(num) {
+    void init(int num) {
+        num_vertices = num;
         const int size = num * num;
         dist = (float*)malloc(size * sizeof(float));
         path = (int*)malloc(size * sizeof(int));
@@ -29,13 +30,21 @@ struct graph_data {
     }
 };
 
-struct data_cl {
+struct apsp_cl {
     cl_context context;
     cl_command_queue command_queue;
     cl_program program;
     cl_kernel kernel[3];
     cl_mem objects[2];
     cl_device_id device_id = 0;
+
+    cl_int move_memory_to_device(const graph_data* g_data);
+    cl_int move_memory_to_host(const graph_data* g_data);
+public:
+    cl_int init(const char* filename);
+    cl_int destroy();
+    cl_int setup_and_run(graph_data* g_data);
 };
 
+// call this to compute apsp
 cl_int calculate_apsp(graph_data* g_data);

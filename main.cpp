@@ -4,7 +4,7 @@
 #define MAX_FSIZE 0x10000000
 #define MAX_DISTANCE 100000.0f   // the same as in kernel.cl
 
-static int read_data(const char* fname, graph_data** data);
+static int read_data(const char* fname, graph_data* data);
 static void print_data(graph_data* data);
 
 int main(int argc, char** argv) {
@@ -12,12 +12,12 @@ int main(int argc, char** argv) {
         puts("Provide filename for test values!");
         return -1;
     }
-    graph_data* g_data;
+    graph_data g_data;
     if (!!read_data(argv[1], &g_data)) {
         return -1;
     }
     const auto start = std::chrono::high_resolution_clock::now();
-    if (calculate_apsp(g_data)) {
+    if (calculate_apsp(&g_data)) {
         puts("Failed calculating apsp.");
         return -1;
     }
@@ -25,13 +25,12 @@ int main(int argc, char** argv) {
     const auto duration = std::chrono::duration_cast<std::chrono::milliseconds>(stop - start).count();
     printf("OpenCl chunk took %lu ms\n", duration);
     
-    print_data(g_data);
-    delete(g_data);
+    print_data(&g_data);
 
     return 0;
 }
 
-static int read_data(const char* fname, graph_data** data) {
+static int read_data(const char* fname, graph_data* data) {
     FILE* file = fopen(fname, "r");
     if (!file) {
         puts("Error opening file!");
@@ -40,27 +39,27 @@ static int read_data(const char* fname, graph_data** data) {
     int num_verts, num_edges;
     fscanf(file, "%d", &num_verts);
     fscanf(file, "%d", &num_edges);
-    *data = new graph_data(num_verts);
+    data->init(num_verts);
 
     // init distance and path predecessor matrix with MAX_DISTANCE values
     const float max_dist = MAX_DISTANCE;
     for (int i = 0, sz = num_verts * num_verts; i < sz; i++) {
-        (*data)->dist[i] = max_dist;
-        (*data)->path[i] = -1;
+        data->dist[i] = max_dist;
+        data->path[i] = -1;
     }
 
     int v0, v1, dist;
     // scan all the edges
     while (EOF != fscanf(file, "%d %d %d", &v0, &v1, &dist)) {  // num_edges
         const int index = v0 * num_verts + v1;
-        (*data)->dist[index] = (float)dist;
-        (*data)->path[index] = v0;
+        data->dist[index] = (float)dist;
+        data->path[index] = v0;
     }
     // zero out edges of vertices to themself
     for (int i = 0; i < num_verts; i++) {
         const int index = i * num_verts + i;
-        (*data)->dist[index] = 0.0f;
-        (*data)->path[index] = -1;
+        data->dist[index] = 0.0f;
+        data->path[index] = -1;
     }
 
     fclose(file);
