@@ -44,38 +44,38 @@ cl_int apsp_cl::init(const char* filename) {
     cl_uint ret_num_devices;
     cl_uint ret_num_platforms;
     cl_int ret = clGetPlatformIDs(max_platforms, platform_ids, &ret_num_platforms);
-    check_result("SO calc: CL failed to retrive platform IDs!");
+    check_result("Error: CL failed to retrive platform IDs!");
     for (int i = 0; i < ret_num_platforms; i++) {
         ret = clGetDeviceIDs(platform_ids[i], CL_DEVICE_TYPE_GPU, 1, &device_id, &ret_num_devices);
         if (ret == CL_SUCCESS) {
             break;
         }
     }
-    check_result("SO calc: CL failed to find appropriate device!");
+    check_result("Error: CL failed to find appropriate device!");
 
     // Create an OpenCL context
     context = clCreateContext(NULL, 1, &device_id, NULL, NULL, &ret);
-    check_result("SO calc: CL failed to create context!");
+    check_result("Error: CL failed to create context!");
     // Create a command queue
     command_queue = clCreateCommandQueue(context, device_id, 0, &ret);  // in-order execution
-    check_result("SO calc: CL failed to create command queue!");
+    check_result("Error: CL failed to create command queue!");
 
     // Create a program from the kernel source
     program = clCreateProgramWithSource(context, 1,
         (const char**)&source_str, (const size_t*)&source_size, &ret);
-    check_result("SO calc: CL failed to create programm!");
+    check_result("Error: CL failed to create programm!");
 
     // Build the program
     ret = clBuildProgram(program, 1, &device_id, "-Werror -cl-denorms-are-zero -cl-fast-relaxed-math", NULL, NULL);
-    check_result("SO calc: CL failed to build programm!");
+    check_result("Error: CL failed to build programm!");
 
     // Create the OpenCL kernels
     kernel[0] = clCreateKernel(program, "dependent_phase", &ret);
-    check_result("SO calc: CL failed to create kernel #0!");
+    check_result("Error: CL failed to create kernel #0!");
     kernel[1] = clCreateKernel(program, "partialy_dependent_phase", &ret);
-    check_result("SO calc: CL failed to create kernel #1!");
+    check_result("Error: CL failed to create kernel #1!");
     kernel[2] = clCreateKernel(program, "independent_phase", &ret);
-    check_result("SO calc: CL failed to create kernel #2!");
+    check_result("Error: CL failed to create kernel #2!");
 
     free(source_str);
 
@@ -118,14 +118,14 @@ cl_int apsp_cl::setup_and_run(graph_data* g_data) {
     cl_uint num_dim = 0;
     size_t val[3];						// should not be more than the 3
     ret = clGetDeviceInfo(device_id, CL_DEVICE_MAX_WORK_ITEM_DIMENSIONS, sizeof(cl_uint), &num_dim, NULL);
-    check_result("SO calc: error retrieving device info #0.");
+    check_result("Error: error retrieving device info #0.");
     assert(num_dim >= 2);
     ret = clGetDeviceInfo(device_id, CL_DEVICE_MAX_WORK_GROUP_SIZE, sizeof(size_t), &val, NULL);
-    check_result("SO calc: error retrieving device info #1.");
+    check_result("Error: error retrieving device info #1.");
     assert(num_blocks < val[0]);
     for (cl_uint i = 0; i < 2; i++) {
         ret = clGetDeviceInfo(device_id, CL_DEVICE_MAX_WORK_ITEM_SIZES, sizeof(size_t) * num_dim, &val, NULL);
-        check_result("SO calc: error retrieving device info #2.");
+        check_result("Error: error retrieving device info #2.");
         assert(local_item_size[i] < val[i]);
         
     }
